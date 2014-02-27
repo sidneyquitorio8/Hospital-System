@@ -11,6 +11,8 @@ import java.util.List;
 @NamedQueries (
 	{
 		@NamedQuery(name = "AppointmentRequest.getAll", query = "from AppointmentRequest"),
+		@NamedQuery(name = "AppointmentRequest.findByDoctorId", query = "from AppointmentRequest where doctor_id = :doctor_id"),
+		@NamedQuery(name = "AppointmentRequest.findByPatientId", query = "from AppointmentRequest where patient_id = :patient_id")
 	}
 )
 public class AppointmentRequest {

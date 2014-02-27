@@ -14,13 +14,16 @@ public class PresentationLayer {
 		Scanner keyboard = new Scanner(System.in);
 		String code = "";
 		while(!code.equalsIgnoreCase("q")) {
-			System.out.println("Sign in as: [A]dmin, [S]taff, or [Q]uit");
+			System.out.println("Sign in as: [A]dmin, [S]taff, [P]atient, or [Q]uit");
 			code = keyboard.next();
 			if(code.equalsIgnoreCase("a")) {
 				adminHandler(keyboard);
 			}
-			if(code.equalsIgnoreCase("s")) {
+			else if(code.equalsIgnoreCase("s")) {
 				staffHandler(keyboard);
+			}
+			else if(code.equalsIgnoreCase("p")) {
+				patientHandler(keyboard);
 			}
 		}
 		System.out.println("Bye Bye");
@@ -210,6 +213,60 @@ public class PresentationLayer {
 			command = keyboard.next();
 			if(command.equalsIgnoreCase("a")) {
 				System.out.println(ServiceLayer.appointmentTester());
+			}
+		}
+	}
+	
+	
+	
+	public static void patientHandler(Scanner keyboard) {
+		String command = "";
+		while(!command.equalsIgnoreCase("q")) {
+			System.out.println("[L]ist Doctors By Specialty, Get [D]octors Appointments, [S]ubmit Appointment Request, [Q]uit to menu");
+			command = keyboard.next();
+			if(command.equalsIgnoreCase("l")) {
+				System.out.println("Enter Specialty Name:");
+				keyboard.nextLine();
+				String name = keyboard.nextLine();
+				Specialty specialty = ServiceLayer.getSpecialty(name);
+				if(specialty != null) {
+					System.out.println(ServiceLayer.listDoctorsBySpecialty(name));
+				}
+				else {
+					System.out.println("Specialty not found");
+				}
+			}
+			else if(command.equalsIgnoreCase("s")) {
+				System.out.println("Enter the doctors name:");
+				keyboard.nextLine();
+				String doctor_name = keyboard.nextLine();
+				Doctor doctor = ServiceLayer.getDoctor(doctor_name);
+				if(doctor != null) {
+					System.out.println("Enter your name:");
+					String patient_name = keyboard.nextLine();
+					Patient patient = ServiceLayer.getPatient(patient_name);
+					if(patient != null) {
+						System.out.println(ServiceLayer.createAppointmentRequest(doctor_name, patient_name));
+					}
+					else {
+						System.out.println("Your name was not found in the system");
+					}
+				}
+				else {
+					System.out.println("Doctor not found");
+				}	
+			}
+			else if(command.equalsIgnoreCase("d")) {
+				System.out.println("Enter the doctors name:");
+				keyboard.nextLine();
+				String doctor_name = keyboard.nextLine();
+				Doctor doctor = ServiceLayer.getDoctor(doctor_name);
+				if(doctor != null) {
+					System.out.println(ServiceLayer.getAppointmentsByDoctor(doctor_name));
+				}
+				else {
+					System.out.println("Doctor not found");
+				}	
 			}
 		}
 	}

@@ -40,6 +40,6 @@ public interface MedicalDAO {
 	
 	public void deletePatient(String patient);
 	
-	public AppointmentRequest createAppointment(Patient patient, Doctor doctor);
+	public AppointmentRequest createAppointmentRequest(Patient patient, Doctor doctor);
 	
 }

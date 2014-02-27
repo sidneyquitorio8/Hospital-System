@@ -143,7 +143,6 @@ public class ConcreteMedicalDAO implements MedicalDAO {
 
 	@Override
 	public void updateDoctor(Doctor doctor, String name, Specialty specialty) {
-		// TODO Auto-generated method stub
 		Session session = sessionFactory.openSession();
 		try {
 			session.beginTransaction();
@@ -190,7 +189,6 @@ public class ConcreteMedicalDAO implements MedicalDAO {
 
 	@Override
 	public void updateSpecialty(Specialty specialty, String new_name) {
-		// TODO Auto-generated method stub
 		if(specialty != null) {
 			Session session = sessionFactory.openSession();
 			try {
@@ -277,7 +275,6 @@ public class ConcreteMedicalDAO implements MedicalDAO {
 
 	@Override
 	public void deleteDoctor(String doctor_name) {
-		// TODO Auto-generated method stub
 		Session session = sessionFactory.openSession();
 		Doctor doctor = new Doctor();
 		try {
@@ -341,7 +338,7 @@ public class ConcreteMedicalDAO implements MedicalDAO {
 	}
 
 	@Override
-	public AppointmentRequest createAppointment(Patient patient, Doctor doctor) {
+	public AppointmentRequest createAppointmentRequest(Patient patient, Doctor doctor) {
 		Session session = sessionFactory.openSession();
 		AppointmentRequest appointment = new AppointmentRequest();
 		try {
@@ -355,7 +352,6 @@ public class ConcreteMedicalDAO implements MedicalDAO {
 
 			appointment.setPatient(patient);
 			appointment.setDoctor(doctor);
-			appointment.setFulfilled(true);
 		 
 		    patient.getAppointmentRequests().add(appointment);
 			doctor.getAppointmentRequests().add(appointment);

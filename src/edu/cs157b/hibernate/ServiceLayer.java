@@ -318,37 +318,37 @@ public class ServiceLayer {
 		return result;
 	}
 	
-//	public static String appointmentTester() {
-//		String result = "";
-//		
-//		Patient patient1 = dao.createPatient("Patient Sid");
-//		Patient patient2 = dao.createPatient("Patient Bob");
-//		Patient patient3 = dao.createPatient("Patient John");
-//		Patient patient4 = dao.createPatient("Patient Jim");
-//		
-//		Doctor doctor1 = dao.createDoctor("Doctor Herb");
-//		Doctor doctor2 = dao.createDoctor("Doctor Bibby");
-//		
-//		AppointmentRequest appointment1 = dao.createAppointment(patient1, doctor1);
-//		AppointmentRequest appointment2 = dao.createAppointment(patient2, doctor1);
-//		AppointmentRequest appointment3 = dao.createAppointment(patient3, doctor2);
-//		AppointmentRequest appointment4 = dao.createAppointment(patient4, doctor2);
-//		
-//		Patient patienta = dao.getPatient("Patient Sid");
-//		Patient patientb = dao.getPatient("Patient Bob");
-//		Patient patientc = dao.getPatient("Patient John");
-//		Patient patientd = dao.getPatient("Patient Jim");
-//		
-//		Doctor doctora = dao.getDoctor("Doctor Herb");
-//		Doctor doctorb = dao.getDoctor("Doctor Bibby");
-//		
-//		result = "Doctor Herb's Patients:\n";
-//		List<Patient> doctora_patients = doctora.getPatients();
-//		for(Patient patient:doctora_patients) {
-//			result += patient.getName() + "\n";
-//		}
-//		
-//		return result;
-//	}
+	public static String appointmentTester() {
+		String result = "";
+		
+		Patient patient1 = dao.createPatient("Patient Sid");
+		Patient patient2 = dao.createPatient("Patient Bob");
+		Patient patient3 = dao.createPatient("Patient John");
+		Patient patient4 = dao.createPatient("Patient Jim");
+		
+		Doctor doctor1 = dao.createDoctor("Doctor Herb");
+		Doctor doctor2 = dao.createDoctor("Doctor Bibby");
+		
+		AppointmentRequest appointment1 = dao.createAppointment(patient1, doctor1);
+		AppointmentRequest appointment2 = dao.createAppointment(patient2, doctor1);
+		AppointmentRequest appointment3 = dao.createAppointment(patient3, doctor2);
+		AppointmentRequest appointment4 = dao.createAppointment(patient4, doctor2);
+		
+		Patient patienta = dao.getPatient("Patient Sid");
+		Patient patientb = dao.getPatient("Patient Bob");
+		Patient patientc = dao.getPatient("Patient John");
+		Patient patientd = dao.getPatient("Patient Jim");
+		
+		Doctor doctora = dao.getDoctor("Doctor Herb");
+		Doctor doctorb = dao.getDoctor("Doctor Bibby");
+		
+		result = "Doctor Herb's Patients:\n";
+		List<Patient> doctora_patients = doctora.getPatients();
+		for(Patient patient:doctora_patients) {
+			result += patient.getName() + "\n";
+		}
+		
+		return result;
+	}
 
 }

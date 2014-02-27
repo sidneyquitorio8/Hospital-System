@@ -206,10 +206,10 @@ public class PresentationLayer {
 	public static void staffHandler(Scanner keyboard) {
 		String command = "";
 		while(!command.equalsIgnoreCase("q")) {
-			System.out.println("[A]ppointment");
+			System.out.println("[A]ppointment or [Q]uit");
 			command = keyboard.next();
 			if(command.equalsIgnoreCase("a")) {
-//				System.out.println(ServiceLayer.appointmentTester());
+				System.out.println(ServiceLayer.appointmentTester());
 			}
 		}
 	}

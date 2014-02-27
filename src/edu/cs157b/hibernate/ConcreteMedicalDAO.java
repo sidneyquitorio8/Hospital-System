@@ -340,33 +340,33 @@ public class ConcreteMedicalDAO implements MedicalDAO {
 		}
 	}
 
-//	@Override
-//	public AppointmentRequest createAppointment(Patient patient, Doctor doctor) {
-//		Session session = sessionFactory.openSession();
-//		AppointmentRequest appointment = new AppointmentRequest();
-//		try {
-//			session.beginTransaction();
-//			if(patient == null) {
-//				throw new NullPointerException();
-//			}
-//			if(doctor == null) {
-//				throw new NullPointerException();
-//			}
-//
-//			appointment.setPatient(patient);
-//			appointment.setDoctor(doctor);
-//			appointment.setFulfilled(true);
-//		 
-//		    patient.getAppointmentRequests().add(appointment);
-//			
-//			session.getTransaction().commit();
-//		}
-//		finally {
-//			session.close();
-//		}
-//		return appointment;		
-//		
-//	}
+	@Override
+	public AppointmentRequest createAppointment(Patient patient, Doctor doctor) {
+		Session session = sessionFactory.openSession();
+		AppointmentRequest appointment = new AppointmentRequest();
+		try {
+			session.beginTransaction();
+			if(patient == null) {
+				throw new NullPointerException();
+			}
+			if(doctor == null) {
+				throw new NullPointerException();
+			}
+
+			appointment.setPatient(patient);
+			appointment.setDoctor(doctor);
+			appointment.setFulfilled(true);
+		 
+		    patient.getAppointmentRequests().add(appointment);
+			doctor.getAppointmentRequests().add(appointment);
+			session.getTransaction().commit();
+		}
+		finally {
+			session.close();
+		}
+		return appointment;		
+		
+	}
 	
 
 

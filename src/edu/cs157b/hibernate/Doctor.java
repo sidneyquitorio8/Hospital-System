@@ -17,8 +17,8 @@ public class Doctor implements Person {
 
 	private int id;
 	private String name;
-	private Specialty specialty; 
-//	private List<AppointmentRequest> appointmentRequests = new ArrayList<AppointmentRequest>();
+	private Specialty specialty;
+	private List<AppointmentRequest> appointmentRequests = new ArrayList<AppointmentRequest>();
 
 	@Id
 	@GeneratedValue
@@ -49,21 +49,22 @@ public class Doctor implements Person {
 		this.specialty = specialty;
 	}
 	
-//	@OneToMany(fetch = FetchType.LAZY, mappedBy = "pk.doctor")
-//	public List<AppointmentRequest> getAppointmentRequests() {
-//		return this.appointmentRequests;
-//	}
-// 
-//	public void setAppointmentRequests(List<AppointmentRequest> appointmentRequests) {
-//		this.appointmentRequests = appointmentRequests;
-//	}
-//	
-//	public List<Patient> getPatients() {
-//		List<Patient> patients = new ArrayList<Patient>();
-//		
-//		for(AppointmentRequest appointment:appointmentRequests) {
-//			patients.add(appointment.getPatient());
-//		}
-//		return patients;
-//	}
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "pk.doctor")
+	public List<AppointmentRequest> getAppointmentRequests() {
+		return this.appointmentRequests;
+	}
+ 
+	public void setAppointmentRequests(List<AppointmentRequest> appointmentRequests) {
+		this.appointmentRequests = appointmentRequests;
+	}
+	
+	@Transient
+	public List<Patient> getPatients() {
+		List<Patient> patients = new ArrayList<Patient>();
+		
+		for(AppointmentRequest appointment:appointmentRequests) {
+			patients.add(appointment.getPatient());
+		}
+		return patients;
+	}
 }

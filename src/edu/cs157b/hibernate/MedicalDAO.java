@@ -20,5 +20,26 @@ public interface MedicalDAO {
 	
 	public void assignDoctorSpecialty(Doctor doctor, Specialty specialty);
 	
+	public void updateDoctor(Doctor doctor, String name, Specialty specialty);
+	
+	public void removeDoctorSpecialtyAssociation(Doctor doctor, Specialty specialty);
+	
+	public void updateSpecialty(Specialty specialty, String new_name);
+	
+	public Patient createPatient(String name);
+	
+	public ArrayList<Patient> getListOfPatients();
+	
+	public Patient getPatient(String name);
+
+	public void updatePatient(Patient patient, String name);
+	
+	public void deleteDoctor(String doctor);
+	
+	public void deleteSpecialty(String specialty);
+	
+	public void deletePatient(String patient);
+	
+//	public AppointmentRequest createAppointment(Patient patient, Doctor doctor);
 	
 }

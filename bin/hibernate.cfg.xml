@@ -33,7 +33,8 @@
 <!--         <mapping class="edu.cs157b.hibernate.Student"/> -->
  		<mapping class="edu.cs157b.hibernate.Doctor"/>
  		<mapping class="edu.cs157b.hibernate.Specialty"/>
-    
+    	<mapping class="edu.cs157b.hibernate.Patient"/>
+     	<mapping class="edu.cs157b.hibernate.AppointmentRequest"/>
 </session-factory>
 </hibernate-configuration>
 

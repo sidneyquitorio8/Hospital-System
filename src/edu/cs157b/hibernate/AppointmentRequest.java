@@ -16,7 +16,6 @@ import java.util.List;
 public class AppointmentRequest {
 	 
 	private int id;
-	private String name;
 	
 	private Doctor doctor;
 	private Patient patient;
@@ -35,14 +34,6 @@ public class AppointmentRequest {
 	}
 	public void setId(int id) {
 		this.id = id;
-	}
-	
-	@Column(unique=true)
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
 	}
 	
 	@ManyToOne (fetch = FetchType.EAGER, cascade= CascadeType.PERSIST) 

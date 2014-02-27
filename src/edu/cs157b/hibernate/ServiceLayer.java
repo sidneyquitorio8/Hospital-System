@@ -334,6 +334,8 @@ public class ServiceLayer {
 		AppointmentRequest appointment3 = dao.createAppointment(patient3, doctor2);
 		AppointmentRequest appointment4 = dao.createAppointment(patient4, doctor2);
 		
+		AppointmentRequest appointment5 = dao.createAppointment(patient1, doctor2);
+		
 		Patient patienta = dao.getPatient("Patient Sid");
 		Patient patientb = dao.getPatient("Patient Bob");
 		Patient patientc = dao.getPatient("Patient John");
@@ -346,6 +348,12 @@ public class ServiceLayer {
 		List<Patient> doctora_patients = doctora.getPatients();
 		for(Patient patient:doctora_patients) {
 			result += patient.getName() + "\n";
+		}
+		
+		result += "\nPatient Sid's Doctors:\n";
+		List<Doctor> patienta_doctors = patienta.getDoctors();
+		for(Doctor doctor:patienta_doctors) {
+			result += doctor.getName() + "\n";
 		}
 		
 		return result;

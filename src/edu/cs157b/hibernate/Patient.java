@@ -47,7 +47,8 @@ public class Patient implements Person {
 		this.name = name;
 	}
 	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "pk.patient", cascade=CascadeType.ALL)
+	@OneToMany(mappedBy="patient", targetEntity = AppointmentRequest.class, 
+			 fetch=FetchType.EAGER, cascade= CascadeType.PERSIST) 
 	public List<AppointmentRequest> getAppointmentRequests() {
 		return this.appointmentRequests;
 	}

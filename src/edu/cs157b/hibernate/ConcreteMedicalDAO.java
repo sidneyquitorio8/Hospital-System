@@ -359,13 +359,15 @@ public class ConcreteMedicalDAO implements MedicalDAO {
 		 
 		    patient.getAppointmentRequests().add(appointment);
 			doctor.getAppointmentRequests().add(appointment);
+			
+			session.save(appointment);
+			
 			session.getTransaction().commit();
 		}
 		finally {
 			session.close();
 		}
-		return appointment;		
-		
+		return appointment;			
 	}
 	
 

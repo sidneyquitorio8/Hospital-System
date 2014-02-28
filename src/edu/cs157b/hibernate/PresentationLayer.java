@@ -309,7 +309,7 @@ public class PresentationLayer {
 					String appointment_id = keyboard.nextLine();
 					try {
 						int id = Integer.parseInt(appointment_id);
-						System.out.println(ServiceLayer.cancelAppointment(id));
+						System.out.println(ServiceLayer.cancelAppointment(patient_name, id));
 					}
 					catch (NumberFormatException nFE) {
 					    System.out.println("Not an integer");

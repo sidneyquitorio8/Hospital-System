@@ -334,6 +334,10 @@ public class ConcreteMedicalDAO implements MedicalDAO {
 			if(patient == null) {
 				throw new NullPointerException();
 			}
+			List<AppointmentRequest> appointments = patient.getAppointmentRequests();
+			for(AppointmentRequest appointment:appointments) {
+				appointment.setPatient(null);
+			}
 			session.delete(patient);
 			session.getTransaction().commit();
 		}

@@ -373,13 +373,18 @@ public class ServiceLayer {
 		return result;
 	}
 	
-	public static String cancelAppointment(int id) {
+	public static String cancelAppointment(String patient_name, int id) {
 		String result = "";
 		AppointmentRequest appointment = dao.getAppointmentById(id);
 		
 		if(appointment != null) {
-			dao.deleteAppointment(id);
-			result = "Appointment " + id + " deleted\n";
+			if(appointment.getPatient().getName().equalsIgnoreCase(patient_name)) {
+				dao.deleteAppointment(id);
+				result = "Appointment " + id + " deleted\n";
+			}
+			else {
+				result = "Not your appointment";
+			}
 		}
 		else {
 			result = "Appointment not found";

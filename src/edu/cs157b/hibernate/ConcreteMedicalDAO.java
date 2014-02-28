@@ -286,6 +286,10 @@ public class ConcreteMedicalDAO implements MedicalDAO {
 			if(doctor == null) {
 				throw new NullPointerException();
 			}
+			List<AppointmentRequest> appointments = doctor.getAppointmentRequests();
+			for(AppointmentRequest appointment:appointments) {
+				appointment.setDoctor(null);
+			}
 			session.delete(doctor);
 			session.getTransaction().commit();
 		}
@@ -366,6 +370,28 @@ public class ConcreteMedicalDAO implements MedicalDAO {
 			session.close();
 		}
 		return appointment;			
+	}
+
+	@Override
+	public AppointmentRequest getAppointmentById(int id) {
+		Session session = sessionFactory.openSession();
+		AppointmentRequest appointmentRequest = null;
+		try {
+			session.beginTransaction();
+			Query query = session.getNamedQuery("AppointmentRequest.findByID");
+			query.setInteger("id", id);
+			appointmentRequest = (AppointmentRequest) query.uniqueResult();
+		}
+		finally {
+			session.close();
+		}
+		return appointmentRequest;		
+	}
+
+	@Override
+	public void deleteAppointment(int id) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 

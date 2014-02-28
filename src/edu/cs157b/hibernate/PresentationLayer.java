@@ -16,6 +16,7 @@ public class PresentationLayer {
 	private static SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 	
 	public static void main(String[] args) {
+		ServiceLayer.appointmentTester();
 		Scanner keyboard = new Scanner(System.in);
 		String code = "";
 		while(!code.equalsIgnoreCase("q")) {
@@ -237,7 +238,7 @@ public class PresentationLayer {
 	public static void patientHandler(Scanner keyboard) {
 		String command = "";
 		while(!command.equalsIgnoreCase("q")) {
-			System.out.println("[L]ist Doctors By Specialty, Get [D]octors Appointments, [S]ubmit Appointment Request, [Q]uit to menu");
+			System.out.println("[L]ist Doctors By Specialty, Get [D]octors Appointments, [S]ubmit Appointment Request, [C]ancel Appointment, [Q]uit to menu");
 			command = keyboard.next();
 			if(command.equalsIgnoreCase("l")) {
 				System.out.println("Enter Specialty Name:");
@@ -295,6 +296,27 @@ public class PresentationLayer {
 				}
 				else {
 					System.out.println("Doctor not found");
+				}	
+			}
+			else if(command.equalsIgnoreCase("c")) {
+				System.out.println("Enter your name:");
+				keyboard.nextLine();
+				String patient_name = keyboard.nextLine();
+				Patient patient = ServiceLayer.getPatient(patient_name);
+				if(patient != null) {
+					System.out.println(ServiceLayer.getAppointmentsByPatient(patient_name));
+					System.out.println("Enter appointment id you would like to delete:");
+					String appointment_id = keyboard.nextLine();
+					try {
+						int id = Integer.parseInt(appointment_id);
+						System.out.println(ServiceLayer.cancelAppointment(id));
+					}
+					catch (NumberFormatException nFE) {
+					    System.out.println("Not an integer");
+					}
+				}
+				else {
+					System.out.println("Patient not found");
 				}	
 			}
 		}

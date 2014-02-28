@@ -315,15 +315,15 @@ public class ServiceLayer {
 			
 			if(doctors_appointments != null) {
 				result = "Doctor " + doctor.getName() + "'s Appointments:\n";
-				result += "Doctor | Patient | Time | Status\n\n";
+				result += "Appointment Id | Doctor | Patient | Time | Status\n\n";
 				for(AppointmentRequest appointment:doctors_appointments) {
-					result += appointment.getDoctor().getName() + " | ";
+					result += appointment.getId() + " | " + appointment.getDoctor().getName() + " | ";
 					result += appointment.getPatient().getName() + " | " + appointment.getFormattedTime() +" | ";
 					if(appointment.isFulfilled()) {
-						result += "SCHEDULED";
+						result += "SCHEDULED\n";
 					}
 					else {
-						result += "NOT SCHEDULED";
+						result += "NOT SCHEDULED\n";
 					}
 				}
 				result += "\n";
@@ -334,6 +334,55 @@ public class ServiceLayer {
 		}
 		else {
 			result = "Doctor not found";
+		}
+		
+		return result;
+	}
+	
+	public static String getAppointmentsByPatient(String patient_name) {
+		String result = "";
+		
+		Patient patient = dao.getPatient(patient_name);
+		
+		if(patient != null) {
+			List<AppointmentRequest> patients_appointments = patient.getAppointmentRequests();
+			
+			if(patients_appointments != null) {
+				result = "Patient " + patient.getName() + "'s Appointments:\n";
+				result += "Appointment ID | Doctor | Patient | Time | Status\n\n";
+				for(AppointmentRequest appointment:patients_appointments) {
+					result += appointment.getId() + " | " + appointment.getDoctor().getName() + " | ";
+					result += appointment.getPatient().getName() + " | " + appointment.getFormattedTime() +" | ";
+					if(appointment.isFulfilled()) {
+						result += "SCHEDULED\n";
+					}
+					else {
+						result += "NOT SCHEDULED\n";
+					}
+				}
+				result += "\n";
+			}
+			else {
+				result = "Patient has no appointments";
+			}
+		}
+		else {
+			result = "Patient not found";
+		}
+		
+		return result;
+	}
+	
+	public static String cancelAppointment(int id) {
+		String result = "";
+		AppointmentRequest appointment = dao.getAppointmentById(id);
+		
+		if(appointment != null) {
+			dao.deleteAppointment(id);
+			result = "Appointment " + id + " deleted\n";
+		}
+		else {
+			result = "Appointment not found";
 		}
 		
 		return result;
@@ -389,6 +438,16 @@ public class ServiceLayer {
 		
 		Doctor doctor1 = dao.createDoctor("Doctor Herb");
 		Doctor doctor2 = dao.createDoctor("Doctor Bibby");
+		Doctor doctor3 = dao.createDoctor("Doctor Jay");
+		Doctor doctor4 = dao.createDoctor("Doctor Fazo");
+		
+		Specialty specialty1 = dao.createSpecialty("Surgery");
+		Specialty specialty2 = dao.createSpecialty("Pediatrics");
+		
+		dao.assignDoctorSpecialty(doctor1, specialty1);
+		dao.assignDoctorSpecialty(doctor2, specialty1);
+		dao.assignDoctorSpecialty(doctor3, specialty2);
+		dao.assignDoctorSpecialty(doctor4, specialty2);
 		
 		Calendar birthday = new GregorianCalendar();
 		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy h:mm a");

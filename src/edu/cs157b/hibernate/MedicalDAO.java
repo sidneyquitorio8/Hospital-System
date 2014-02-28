@@ -43,4 +43,8 @@ public interface MedicalDAO {
 	
 	public AppointmentRequest createAppointmentRequest(Patient patient, Doctor doctor, Calendar time);
 	
+	public AppointmentRequest getAppointmentById(int id);
+	
+	public void deleteAppointment(int id);
+	
 }

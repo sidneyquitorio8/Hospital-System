@@ -222,6 +222,7 @@ public class ServiceLayer {
 		Patient patient = dao.getPatient(name);
 		try {
 			info = "Patient name: " + patient.getName() + "\n";
+			info = "Patient medical record: " + patient.getMedical_record() + "\n";
 		}
 		catch(NullPointerException e) {
 			info = "Patient not found";
@@ -229,13 +230,27 @@ public class ServiceLayer {
 		return info;
 	}
 	
-	public static String updatePatient(Patient patient, String new_name) {
+	public static String updatePatientName(Patient patient, String new_name) {
 		String result = "";
 		if(patient != null) {
-			dao.updatePatient(patient, new_name);
+			dao.updatePatient(patient, new_name, null);
 			
 			result = "Patients new information:\n\n";
 			result += patientByName(new_name);
+		}
+		else {
+			result = "Patient not found";
+		}
+		return result;
+	}
+	
+	public static String updatePatientRecord(Patient patient, String medical_record) {
+		String result = "";
+		if(patient != null) {
+			dao.updatePatient(patient, null, medical_record);
+			
+			result = "Patients new information:\n\n";
+			result += patientByName(patient.getName());
 		}
 		else {
 			result = "Patient not found";
@@ -339,13 +354,22 @@ public class ServiceLayer {
 		return result;
 	}
 	
-	public static String getAppointmentsByPatient(String patient_name) {
+	public static String getAppointmentsByPatient(String patient_name, String type) {
 		String result = "";
 		
 		Patient patient = dao.getPatient(patient_name);
 		
 		if(patient != null) {
-			List<AppointmentRequest> patients_appointments = patient.getAppointmentRequests();
+			List<AppointmentRequest> patients_appointments = null;
+			if(type == "unscheduled") {
+				patients_appointments = patient.getUnscheduledAppointmentRequests();
+			}
+			else if(type == "scheduled") {
+				patients_appointments = patient.getScheduledAppointmentsRequests();
+			}
+			else {
+				patients_appointments = patient.getAppointmentRequests();
+			}
 			
 			if(patients_appointments != null) {
 				result = "Patient " + patient.getName() + "'s Appointments:\n";
@@ -373,14 +397,19 @@ public class ServiceLayer {
 		return result;
 	}
 	
-	public static String cancelAppointment(String patient_name, int id) {
+	public static String cancelAppointmentRequestByPatient(String patient_name, int id) {
 		String result = "";
 		AppointmentRequest appointment = dao.getAppointmentById(id);
 		
 		if(appointment != null) {
 			if(appointment.getPatient().getName().equalsIgnoreCase(patient_name)) {
-				dao.deleteAppointment(id);
-				result = "Appointment " + id + " deleted\n";
+				if(!appointment.isFulfilled()) {
+					dao.deleteAppointment(id);
+					result = "Appointment " + id + " deleted\n";
+				}
+				else {
+					result = "Appointment Already Scheduled Please Submit Cancellation Request";
+				}
 			}
 			else {
 				result = "Not your appointment";
@@ -389,6 +418,54 @@ public class ServiceLayer {
 		else {
 			result = "Appointment not found";
 		}
+		
+		return result;
+	}
+	
+	public static String unFulfilledAppointmentRequest() {
+		String result = "";
+		List<AppointmentRequest> appointments = dao.getUnFulfilledAppointments();
+		result = "All Unfulfilled Appointment Requests\n";
+		result += "Appointment Id | Doctor | Patient | Time | Status\n\n";
+		for(AppointmentRequest appointment:appointments) {
+			result += appointment.getId() + " | " + appointment.getDoctor().getName() + " | ";
+			result += appointment.getPatient().getName() + " | " + appointment.getFormattedTime() +" | ";
+			if(appointment.isFulfilled()) {
+				result += "SCHEDULED\n";
+			}
+			else {
+				result += "NOT SCHEDULED\n";
+			}
+		}
+		result += "\n";
+		
+		return result;		
+	}
+	
+	public static String fulfilledAppointmentRequest() {
+		String result = "";
+		List<AppointmentRequest> appointments = dao.getFulfilledAppointments();
+		result = "All Fulfilled Appointment Requests\n";
+		result += "Appointment Id | Doctor | Patient | Time | Status\n\n";
+		for(AppointmentRequest appointment:appointments) {
+			result += appointment.getId() + " | " + appointment.getDoctor().getName() + " | ";
+			result += appointment.getPatient().getName() + " | " + appointment.getFormattedTime() +" | ";
+			if(appointment.isFulfilled()) {
+				result += "SCHEDULED\n";
+			}
+			else {
+				result += "NOT SCHEDULED\n";
+			}
+		}
+		result += "\n";
+		
+		return result;		
+	}
+	
+	public static String staffScheduleAppointment(int id) {
+		String result = "";
+		
+		result = dao.staffScheduleAppointment(id);	
 		
 		return result;
 	}
@@ -434,6 +511,76 @@ public class ServiceLayer {
 		return result;
 	}
 	
+	public static String viewAppointmentCancelRequest() {
+		String result = "";
+		List<AppointmentRequest> appointments = dao.getCancelRequest();
+		result = "All Cancellation Requests\n";
+		result += "Appointment Id | Doctor | Patient | Time | Status\n\n";
+		for(AppointmentRequest appointment:appointments) {
+			result += appointment.getId() + " | " + appointment.getDoctor().getName() + " | ";
+			result += appointment.getPatient().getName() + " | " + appointment.getFormattedTime() +" | ";
+			if(appointment.isFulfilled()) {
+				result += "SCHEDULED\n";
+			}
+			else {
+				result += "NOT SCHEDULED\n";
+			}
+		}
+		result += "\n";
+		
+		return result;	
+	}
+	
+	public static String requestToCancelScheduledAppointment(String patient_name, int id) {
+		String result = "";
+		AppointmentRequest appointment = dao.getAppointmentById(id);
+		
+		if(appointment != null) {
+			if(appointment.getPatient().getName().equalsIgnoreCase(patient_name)) {
+				if(appointment.isFulfilled()) {
+					dao.requestToCancelScheduledAppointment(id);
+					result = "Request to cancel appointment " + id + " was sent\n";
+				}
+				else {
+					result = "Appointment has not been scheduled";
+				}
+			}
+			else {
+				result = "Not your appointment";
+			}
+		}
+		else {
+			result = "Appointment not found";
+		}
+			
+		return result;
+	}
+	
+	public static String cancelScheduledAppointment(int id) {
+		String result = "";
+		
+		AppointmentRequest appointment = dao.getAppointmentById(id);
+		if(appointment != null) {
+			if(appointment.isCancel_requested()) {
+				if(appointment.isFulfilled()) {
+					dao.deleteAppointment(id);
+					result = "Appointment " + id + " was deleted";
+				}
+				else {
+					result = "Appointment was not even scheduled";
+				}
+			}
+			else {
+				result = "Appointment was not requested to be cancelled";
+			}
+		}
+		else {
+			result = "Appointment not found";
+		}
+		
+		return result;
+	}
+	
 	public static String appointmentTester() {
 		String result = "";
 		Patient patient1 = dao.createPatient("Patient Sid");
@@ -457,7 +604,14 @@ public class ServiceLayer {
 		Calendar birthday = new GregorianCalendar();
 		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy h:mm a");
 		try {
-			birthday.setTime(sdf.parse("10/21/1990 10:00 PM"));
+			birthday.setTime(sdf.parse("10/21/2014 10:00 PM"));
+		} catch (ParseException e) {
+			result = "ERORORORORORROR";
+		}
+		
+		Calendar old_date = new GregorianCalendar();
+		try {
+			old_date.setTime(sdf.parse("10/21/1990 10:00 PM"));
 		} catch (ParseException e) {
 			result = "ERORORORORORROR";
 		}
@@ -467,7 +621,7 @@ public class ServiceLayer {
 		AppointmentRequest appointment3 = dao.createAppointmentRequest(patient3, doctor2,birthday);
 		AppointmentRequest appointment4 = dao.createAppointmentRequest(patient4, doctor2,birthday);
 		
-		AppointmentRequest appointment5 = dao.createAppointmentRequest(patient1, doctor2,birthday);
+		AppointmentRequest appointment5 = dao.createAppointmentRequest(patient1, doctor2,old_date);
 		
 		Patient patienta = dao.getPatient("Patient Sid");
 		Patient patientb = dao.getPatient("Patient Bob");

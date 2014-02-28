@@ -16,6 +16,9 @@ import java.util.List;
 @NamedQueries (
 	{
 		@NamedQuery(name = "AppointmentRequest.getAll", query = "from AppointmentRequest"),
+		@NamedQuery(name = "AppointmentRequest.getFulfilled", query = "from AppointmentRequest where fulfilled = true"),
+		@NamedQuery(name = "AppointmentRequest.getUnFulfilled", query = "from AppointmentRequest where fulfilled = false"),
+		@NamedQuery(name = "AppointmentRequest.getCancelRequest", query = "from AppointmentRequest where cancel_requested = true and fulfilled = true"),
 		@NamedQuery(name = "AppointmentRequest.findByDoctorId", query = "from AppointmentRequest where doctor_id = :doctor_id"),
 		@NamedQuery(name = "AppointmentRequest.findByPatientId", query = "from AppointmentRequest where patient_id = :patient_id"),
 		@NamedQuery(name = "AppointmentRequest.findByID", query = "from AppointmentRequest where id = :id")
@@ -30,8 +33,17 @@ public class AppointmentRequest {
 	private boolean fulfilled = false;
 	private Calendar time;
 	private final SimpleDateFormat timestampFormat = new SimpleDateFormat("MM/dd/yyyy h a");
+	private boolean cancel_requested = false;
 	
 	
+	public boolean isCancel_requested() {
+		return cancel_requested;
+	}
+
+	public void setCancel_requested(boolean cancel_requested) {
+		this.cancel_requested = cancel_requested;
+	}
+
 	public Calendar getTime() {
 		return time;
 	}

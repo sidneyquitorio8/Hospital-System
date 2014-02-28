@@ -17,7 +17,7 @@ public class Patient implements Person {
 
 	private int id;
 	private String name;
-	private String medical_record;
+	private String medical_record = "";
 	private List<AppointmentRequest> appointmentRequests = new ArrayList<AppointmentRequest>();
 
 	public String getMedical_record() {
@@ -51,6 +51,28 @@ public class Patient implements Person {
 			 fetch=FetchType.EAGER, orphanRemoval=true, cascade= CascadeType.PERSIST) 
 	public List<AppointmentRequest> getAppointmentRequests() {
 		return this.appointmentRequests;
+	}
+	
+	@Transient
+	public List<AppointmentRequest> getUnscheduledAppointmentRequests() {
+		List<AppointmentRequest> unscheduled_appointments = new ArrayList<AppointmentRequest>();
+		for(AppointmentRequest appointment:appointmentRequests) {
+			if(!appointment.isFulfilled()) {
+				unscheduled_appointments.add(appointment);
+			}
+		}
+		return unscheduled_appointments;
+	}
+	
+	@Transient
+	public List<AppointmentRequest> getScheduledAppointmentsRequests() {
+		List<AppointmentRequest> unscheduled_appointments = new ArrayList<AppointmentRequest>();
+		for(AppointmentRequest appointment:appointmentRequests) {
+			if(appointment.isFulfilled()) {
+				unscheduled_appointments.add(appointment);
+			}
+		}
+		return unscheduled_appointments;
 	}
  
 	public void setAppointmentRequests(List<AppointmentRequest> appointmentRequests) {

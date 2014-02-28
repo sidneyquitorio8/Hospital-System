@@ -1,8 +1,10 @@
 package edu.cs157b.hibernate;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -256,14 +258,17 @@ public class ConcreteMedicalDAO implements MedicalDAO {
 	}
 
 	@Override
-	public void updatePatient(Patient patient, String new_name) {
+	public void updatePatient(Patient patient, String new_name, String medical_record) {
 		if(patient != null) {
 			Session session = sessionFactory.openSession();
 			try {
 				session.beginTransaction();
-				
-				patient.setName(new_name);
-				
+				if(new_name != null) {
+					patient.setName(new_name);
+				}
+				if(medical_record != null) {
+					patient.setMedical_record(medical_record);
+				}
 				session.saveOrUpdate(patient);
 				session.getTransaction().commit();
 			}
@@ -394,8 +399,134 @@ public class ConcreteMedicalDAO implements MedicalDAO {
 
 	@Override
 	public void deleteAppointment(int id) {
-		// TODO Auto-generated method stub
+		Session session = sessionFactory.openSession();
+		AppointmentRequest appointment = null;
+		try {
+			session.beginTransaction();
+			Query query = session.getNamedQuery("AppointmentRequest.findByID");
+			query.setInteger("id", id);
+			appointment = (AppointmentRequest) query.uniqueResult();
+			if(appointment == null) {
+				throw new NullPointerException();
+			}
+			session.delete(appointment);
+			session.getTransaction().commit();
+		}
+		finally {
+			session.close();
+		}		
+	}
+
+	@Override
+	public ArrayList<AppointmentRequest> getUnFulfilledAppointments() {
+		Session session = sessionFactory.openSession();
+		ArrayList<AppointmentRequest> appointments = new ArrayList<AppointmentRequest>();
+		try {
+			session.beginTransaction();
+			Query query = session.getNamedQuery("AppointmentRequest.getUnFulfilled");
+			appointments = (ArrayList<AppointmentRequest>) query.list();
+		}
+		finally {
+			session.close();
+		}
+		return appointments;
+	}
+
+	@Override
+	public ArrayList<AppointmentRequest> getFulfilledAppointments() {
+		Session session = sessionFactory.openSession();
+		ArrayList<AppointmentRequest> appointments = new ArrayList<AppointmentRequest>();
+		try {
+			session.beginTransaction();
+			Query query = session.getNamedQuery("AppointmentRequest.getFulfilled");
+			appointments = (ArrayList<AppointmentRequest>) query.list();
+		}
+		finally {
+			session.close();
+		}
+		return appointments;
+	}
+
+	@Override
+	public String staffScheduleAppointment(int id) {
+		String result = "";
+		boolean is_ok = true;
+		AppointmentRequest appointment = getAppointmentById(id);
 		
+		if(appointment != null) {
+			List<AppointmentRequest> fulfilled_appointments = getFulfilledAppointments();
+			for(AppointmentRequest a: fulfilled_appointments) {
+				if(appointment.getTime().equals(a.getTime())) {
+					result = "Doctor " + appointment.getDoctor().getName() + " is already book on " + appointment.getFormattedTime();
+					is_ok = false;
+					return result;
+				}
+			}
+			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy h:mm a");
+			TimeZone tz = TimeZone.getTimeZone("GMT-08:00");
+			Calendar current_time = Calendar.getInstance(tz);
+			if(appointment.getTime().before(current_time)) {
+				result = "Current date & time is: " + sdf.format(current_time.getTime());
+				result += "\nYou cannot book before this";
+				is_ok = false;
+			}
+			if(is_ok) {
+				Session session = sessionFactory.openSession();
+				try {
+					session.beginTransaction();
+					
+					appointment.setFulfilled(true);
+					
+					session.saveOrUpdate(appointment);
+					session.getTransaction().commit();
+					result = "Appointment booked: " + appointment.getDoctor().getName() + " will see " + appointment.getPatient().getName() + " on " + appointment.getFormattedTime();
+				}
+				finally {
+					session.close();
+				}	
+			}
+		}
+		else {
+			result = "Appointment not found";
+		}
+		
+		return result;
+	}
+
+	@Override
+	public ArrayList<AppointmentRequest> getCancelRequest() {
+		Session session = sessionFactory.openSession();
+		ArrayList<AppointmentRequest> appointments = new ArrayList<AppointmentRequest>();
+		try {
+			session.beginTransaction();
+			Query query = session.getNamedQuery("AppointmentRequest.getCancelRequest");
+			appointments = (ArrayList<AppointmentRequest>) query.list();
+		}
+		finally {
+			session.close();
+		}
+		return appointments;
+	}
+
+	@Override
+	public void requestToCancelScheduledAppointment(int id) {
+		Session session = sessionFactory.openSession();
+		AppointmentRequest appointment = null;
+		try {
+			session.beginTransaction();
+			Query query = session.getNamedQuery("AppointmentRequest.findByID");
+			query.setInteger("id", id);
+			appointment = (AppointmentRequest) query.uniqueResult();
+			if(appointment == null) {
+				throw new NullPointerException();
+			}
+			appointment.setCancel_requested(true);
+			session.saveOrUpdate(appointment);
+			session.getTransaction().commit();
+		}
+		finally {
+			session.close();
+		}	
 	}
 	
 

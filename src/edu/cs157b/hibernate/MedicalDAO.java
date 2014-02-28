@@ -2,6 +2,7 @@ package edu.cs157b.hibernate;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public interface MedicalDAO {
 
@@ -33,7 +34,7 @@ public interface MedicalDAO {
 	
 	public Patient getPatient(String name);
 
-	public void updatePatient(Patient patient, String name);
+	public void updatePatient(Patient patient, String name, String medical_record);
 	
 	public void deleteDoctor(String doctor);
 	
@@ -46,5 +47,15 @@ public interface MedicalDAO {
 	public AppointmentRequest getAppointmentById(int id);
 	
 	public void deleteAppointment(int id);
+	
+	public ArrayList<AppointmentRequest> getUnFulfilledAppointments();
+	
+	public ArrayList<AppointmentRequest> getFulfilledAppointments();
+	
+	public String staffScheduleAppointment(int id);
+	
+	public ArrayList<AppointmentRequest> getCancelRequest();
+	
+	public void requestToCancelScheduledAppointment(int id);
 	
 }

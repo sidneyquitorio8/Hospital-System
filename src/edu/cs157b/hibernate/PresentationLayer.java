@@ -20,7 +20,7 @@ public class PresentationLayer {
 		Scanner keyboard = new Scanner(System.in);
 		String code = "";
 		while(!code.equalsIgnoreCase("q")) {
-			System.out.println("Sign in as: [A]dmin, [S]taff, [P]atient, or [Q]uit");
+			System.out.println("Sign in as: [A]dmin, [S]taff, [P]atient, [D]octor, or [Q]uit");
 			
 //			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy h:mm a");
 //			TimeZone tz = TimeZone.getTimeZone("GMT-08:00");
@@ -40,6 +40,9 @@ public class PresentationLayer {
 			}
 			else if(code.equalsIgnoreCase("p")) {
 				patientHandler(keyboard);
+			}
+			else if(code.equalsIgnoreCase("d")) {
+				doctorHandler(keyboard);
 			}
 		}
 		System.out.println("Bye Bye");
@@ -207,7 +210,7 @@ public class PresentationLayer {
 				if(patient != null) {
 					System.out.println("Enter the patients new name:");
 					String new_name = keyboard.nextLine();
-					System.out.println(ServiceLayer.updatePatient(patient, new_name));
+					System.out.println(ServiceLayer.updatePatientName(patient, new_name));
 				}
 				else {
 					System.out.println("Patient not found");
@@ -222,23 +225,10 @@ public class PresentationLayer {
 		}
 	}
 	
-	public static void staffHandler(Scanner keyboard) {
-		String command = "";
-		while(!command.equalsIgnoreCase("q")) {
-			System.out.println("[A]ppointment or [Q]uit");
-			command = keyboard.next();
-			if(command.equalsIgnoreCase("a")) {
-				System.out.println(ServiceLayer.appointmentTester());
-			}
-		}
-	}
-	
-	
-	
 	public static void patientHandler(Scanner keyboard) {
 		String command = "";
 		while(!command.equalsIgnoreCase("q")) {
-			System.out.println("[L]ist Doctors By Specialty, Get [D]octors Appointments, [S]ubmit Appointment Request, [C]ancel Appointment, [Q]uit to menu");
+			System.out.println("[L]ist Doctors By Specialty, Get [D]octors Appointments, [V]iew Your Future Appointments\n[S]ubmit Appointment Request, Submit [A]ppointment Cancellation Request\n[C]ancel Appointment Request [Q]uit to menu");
 			command = keyboard.next();
 			if(command.equalsIgnoreCase("l")) {
 				System.out.println("Enter Specialty Name:");
@@ -304,12 +294,13 @@ public class PresentationLayer {
 				String patient_name = keyboard.nextLine();
 				Patient patient = ServiceLayer.getPatient(patient_name);
 				if(patient != null) {
-					System.out.println(ServiceLayer.getAppointmentsByPatient(patient_name));
-					System.out.println("Enter appointment id you would like to delete:");
+					System.out.println("Note: You may only delete appointments that have not yet been scheduled");
+					System.out.println(ServiceLayer.getAppointmentsByPatient(patient_name, "unscheduled"));
+					System.out.println("Enter appointment id you would like to delete or press enter to go back:");
 					String appointment_id = keyboard.nextLine();
 					try {
 						int id = Integer.parseInt(appointment_id);
-						System.out.println(ServiceLayer.cancelAppointment(patient_name, id));
+						System.out.println(ServiceLayer.cancelAppointmentRequestByPatient(patient_name, id));
 					}
 					catch (NumberFormatException nFE) {
 					    System.out.println("Not an integer");
@@ -318,6 +309,120 @@ public class PresentationLayer {
 				else {
 					System.out.println("Patient not found");
 				}	
+			}
+			else if(command.equalsIgnoreCase("v")) {
+				System.out.println("Enter your name:");
+				keyboard.nextLine();
+				String patient_name = keyboard.nextLine();
+				Patient patient = ServiceLayer.getPatient(patient_name);
+				if(patient != null) {
+					System.out.println(ServiceLayer.getAppointmentsByPatient(patient_name, "scheduled"));
+				}
+				else {
+					System.out.println("Patient not found");
+				}	
+			}
+			else if(command.equalsIgnoreCase("a")) {
+				System.out.println("Enter your name:");
+				keyboard.nextLine();
+				String patient_name = keyboard.nextLine();
+				Patient patient = ServiceLayer.getPatient(patient_name);
+				if(patient != null) {
+					System.out.println(ServiceLayer.getAppointmentsByPatient(patient_name, "scheduled"));
+					System.out.println("Enter appointment id you would like to cancel:");
+					String appointment_id = keyboard.nextLine();
+					try {
+						int id = Integer.parseInt(appointment_id);
+						System.out.println(ServiceLayer.requestToCancelScheduledAppointment(patient_name, id));
+					}
+					catch (NumberFormatException nFE) {
+					    System.out.println("Not an integer");
+					}
+				}
+				else {
+					System.out.println("Patient not found");
+				}		
+			}
+		}
+	}
+	
+	public static void staffHandler(Scanner keyboard) {
+		String command = "";
+		while(!command.equalsIgnoreCase("q")) {
+			System.out.println("[V]iew Scheduled Appointments, View [A]ppointment Request, [S]chedule Appointment, [C]ancel Appointment, or [Q]uit");
+			command = keyboard.next();
+			if(command.equalsIgnoreCase("a")) {
+				System.out.println(ServiceLayer.unFulfilledAppointmentRequest());
+			}
+			else if(command.equalsIgnoreCase("v")) {
+				System.out.println(ServiceLayer.fulfilledAppointmentRequest());
+			}
+			else if(command.equalsIgnoreCase("s")) {
+				System.out.println(ServiceLayer.unFulfilledAppointmentRequest());
+				System.out.println("Enter appointment id you would like to schedule or press enter to go back:");
+				keyboard.nextLine();
+				String appointment_id = keyboard.nextLine();
+				try {
+					int id = Integer.parseInt(appointment_id);
+					System.out.println(ServiceLayer.staffScheduleAppointment(id));
+				}
+				catch (NumberFormatException nFE) {
+				    System.out.println("Not an integer");
+				}
+			}
+			else if(command.equalsIgnoreCase("c")) {
+				System.out.println(ServiceLayer.viewAppointmentCancelRequest());
+				System.out.println("Enter appointment id you would like to cancel:");
+				keyboard.nextLine();
+				String appointment_id = keyboard.nextLine();
+				try {
+					int id = Integer.parseInt(appointment_id);
+					System.out.println(ServiceLayer.cancelScheduledAppointment(id));
+				}
+				catch (NumberFormatException nFE) {
+				    System.out.println("Not an integer");
+				}
+			}
+		}
+	}
+	
+	public static void doctorHandler(Scanner keyboard) {
+		String command = "";
+		while(!command.equalsIgnoreCase("q")) {
+			System.out.println("[R]etrieve Patient Information, [U]pdate Patient Record, [S]earch for doctors by specialty, or [Q]uit");
+			command = keyboard.next();
+			if(command.equalsIgnoreCase("r")) {
+				System.out.println("Enter the patients name:");
+				keyboard.nextLine();
+				String name = keyboard.nextLine();
+				System.out.println(ServiceLayer.patientByName(name));
+			}
+			else if(command.equalsIgnoreCase("u")) {
+				System.out.println("Enter the patients name:");
+				keyboard.nextLine();
+				String patient_name = keyboard.nextLine();
+				Patient patient = ServiceLayer.getPatient(patient_name);
+				if(patient != null) {
+					System.out.println(ServiceLayer.patientByName(patient_name));
+					System.out.println("Enter the patients new medical record:");
+					String medical_record = keyboard.nextLine();
+					System.out.println(ServiceLayer.updatePatientRecord(patient, medical_record));
+				}
+				else {
+					System.out.println("Patient not found");
+				}
+			}
+			else if(command.equalsIgnoreCase("s")) {
+				System.out.println("Enter Specialty Name:");
+				keyboard.nextLine();
+				String name = keyboard.nextLine();
+				Specialty specialty = ServiceLayer.getSpecialty(name);
+				if(specialty != null) {
+					System.out.println(ServiceLayer.listDoctorsBySpecialty(name));
+				}
+				else {
+					System.out.println("Specialty not found");
+				}
 			}
 		}
 	}

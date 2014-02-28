@@ -1,6 +1,11 @@
 package edu.cs157b.hibernate;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Scanner;
+import java.util.TimeZone;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -15,6 +20,16 @@ public class PresentationLayer {
 		String code = "";
 		while(!code.equalsIgnoreCase("q")) {
 			System.out.println("Sign in as: [A]dmin, [S]taff, [P]atient, or [Q]uit");
+			
+//			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy h:mm a");
+//			TimeZone tz = TimeZone.getTimeZone("GMT-08:00");
+//			Calendar c = Calendar.getInstance(tz);
+//			System.out.println( sdf.format(c.getTime()) );
+			
+//			Calendar c = Calendar.getInstance(tz);
+//			c.setTime(sdf.parse("10/21/1990 10:00 PM"));
+//			System.out.println( sdf.format(c.getTime()) );
+			
 			code = keyboard.next();
 			if(code.equalsIgnoreCase("a")) {
 				adminHandler(keyboard);
@@ -237,6 +252,7 @@ public class PresentationLayer {
 				}
 			}
 			else if(command.equalsIgnoreCase("s")) {
+				boolean format_ok = true;
 				System.out.println("Enter the doctors name:");
 				keyboard.nextLine();
 				String doctor_name = keyboard.nextLine();
@@ -246,7 +262,20 @@ public class PresentationLayer {
 					String patient_name = keyboard.nextLine();
 					Patient patient = ServiceLayer.getPatient(patient_name);
 					if(patient != null) {
-						System.out.println(ServiceLayer.createAppointmentRequest(doctor_name, patient_name));
+						System.out.println("Enter appointment time in the following format MM/dd/yyyy h a");
+						System.out.println("Example: 01/21/1990 10 PM");
+						String timestamp = keyboard.nextLine();
+						Calendar time = new GregorianCalendar();
+						SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy h a");
+						try {
+							time.setTime(sdf.parse(timestamp));
+						} catch (ParseException e) {
+							System.out.println("Incorrect timestamp format");
+							format_ok = false;
+						}
+						if(format_ok) {
+							System.out.println(ServiceLayer.createAppointmentRequest(doctor_name, patient_name, time));
+						}
 					}
 					else {
 						System.out.println("Your name was not found in the system");

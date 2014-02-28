@@ -1,8 +1,13 @@
 package edu.cs157b.hibernate;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 import javax.persistence.*;
+
+import org.hibernate.annotations.Type;
 
 import java.util.List;
 
@@ -22,7 +27,23 @@ public class AppointmentRequest {
 	private Doctor doctor;
 	private Patient patient;
 	private boolean fulfilled = false;
-	 
+	private Calendar time;
+	private final SimpleDateFormat timestampFormat = new SimpleDateFormat("MM/dd/yyyy h a");
+	
+	
+	public Calendar getTime() {
+		return time;
+	}
+	
+	@Transient
+	public String getFormattedTime() {	
+		String result = timestampFormat.format(time.getTime());
+		return result;
+	}
+	
+	public void setTime(Calendar time) {
+		this.time = time;
+	}
 	public boolean isFulfilled() {
 		return fulfilled;
 	}

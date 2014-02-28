@@ -1,6 +1,7 @@
 package edu.cs157b.hibernate;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -338,7 +339,7 @@ public class ConcreteMedicalDAO implements MedicalDAO {
 	}
 
 	@Override
-	public AppointmentRequest createAppointmentRequest(Patient patient, Doctor doctor) {
+	public AppointmentRequest createAppointmentRequest(Patient patient, Doctor doctor, Calendar time) {
 		Session session = sessionFactory.openSession();
 		AppointmentRequest appointment = new AppointmentRequest();
 		try {
@@ -352,6 +353,7 @@ public class ConcreteMedicalDAO implements MedicalDAO {
 
 			appointment.setPatient(patient);
 			appointment.setDoctor(doctor);
+			appointment.setTime(time);
 		 
 		    patient.getAppointmentRequests().add(appointment);
 			doctor.getAppointmentRequests().add(appointment);

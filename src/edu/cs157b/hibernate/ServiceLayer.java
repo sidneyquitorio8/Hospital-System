@@ -3,7 +3,9 @@ package edu.cs157b.hibernate;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.hibernate.exception.ConstraintViolationException;
@@ -280,7 +282,7 @@ public class ServiceLayer {
 		return result;
 	}
 	
-	public static String createAppointmentRequest(String doctor_name, String patient_name) {
+	public static String createAppointmentRequest(String doctor_name, String patient_name, Calendar time) {
 		String result = "";
 		
 		Patient patient = dao.getPatient(patient_name);
@@ -296,7 +298,7 @@ public class ServiceLayer {
 			result += "Doctor not found\n";
 		}
 		else {
-			dao.createAppointmentRequest(patient, doctor);
+//			dao.createAppointmentRequest(patient, doctor);
 			result = "Appointment Created";
 		}
 		
@@ -322,7 +324,7 @@ public class ServiceLayer {
 					else {
 						result += "NOT SCHEDULED";
 					}
-					result += " / " + appointment.getPatient().getName() + "\n";
+					result += " / " + appointment.getPatient().getName() + " / " + appointment.getFormattedTime() +"\n";
 				}
 				result += "\n";
 			}
@@ -380,13 +382,6 @@ public class ServiceLayer {
 	
 	public static String appointmentTester() {
 		String result = "";
-//		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-//		try {
-//			Date d = sdf.parse("21/12/2012");
-//		} catch (ParseException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 		Patient patient1 = dao.createPatient("Patient Sid");
 		Patient patient2 = dao.createPatient("Patient Bob");
 		Patient patient3 = dao.createPatient("Patient John");
@@ -395,12 +390,20 @@ public class ServiceLayer {
 		Doctor doctor1 = dao.createDoctor("Doctor Herb");
 		Doctor doctor2 = dao.createDoctor("Doctor Bibby");
 		
-		AppointmentRequest appointment1 = dao.createAppointmentRequest(patient1, doctor1);
-		AppointmentRequest appointment2 = dao.createAppointmentRequest(patient2, doctor1);
-		AppointmentRequest appointment3 = dao.createAppointmentRequest(patient3, doctor2);
-		AppointmentRequest appointment4 = dao.createAppointmentRequest(patient4, doctor2);
+		Calendar birthday = new GregorianCalendar();
+		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy h:mm a");
+		try {
+			birthday.setTime(sdf.parse("10/21/1990 10:00 PM"));
+		} catch (ParseException e) {
+			result = "ERORORORORORROR";
+		}
 		
-		AppointmentRequest appointment5 = dao.createAppointmentRequest(patient1, doctor2);
+		AppointmentRequest appointment1 = dao.createAppointmentRequest(patient1, doctor1,birthday);
+		AppointmentRequest appointment2 = dao.createAppointmentRequest(patient2, doctor1,birthday);
+		AppointmentRequest appointment3 = dao.createAppointmentRequest(patient3, doctor2,birthday);
+		AppointmentRequest appointment4 = dao.createAppointmentRequest(patient4, doctor2,birthday);
+		
+		AppointmentRequest appointment5 = dao.createAppointmentRequest(patient1, doctor2,birthday);
 		
 		Patient patienta = dao.getPatient("Patient Sid");
 		Patient patientb = dao.getPatient("Patient Bob");
@@ -410,10 +413,11 @@ public class ServiceLayer {
 		Doctor doctora = dao.getDoctor("Doctor Herb");
 		Doctor doctorb = dao.getDoctor("Doctor Bibby");
 		
-		result = "Doctor Herb's Patients:\n";
+		result += "Doctor Herb's Patients:\n";
 		List<Patient> doctora_patients = doctora.getPatients();
 		for(Patient patient:doctora_patients) {
-			result += patient.getName() + "\n";
+			Calendar c = patient.getAppointmentRequests().get(0).getTime();
+			result += patient.getName() + " " + sdf.format(c.getTime()) + "\n";
 		}
 		
 		result += "\nPatient Sid's Doctors:\n";

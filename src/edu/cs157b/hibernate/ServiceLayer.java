@@ -298,7 +298,7 @@ public class ServiceLayer {
 			result += "Doctor not found\n";
 		}
 		else {
-//			dao.createAppointmentRequest(patient, doctor);
+			dao.createAppointmentRequest(patient, doctor, time);
 			result = "Appointment Created";
 		}
 		
@@ -315,16 +315,16 @@ public class ServiceLayer {
 			
 			if(doctors_appointments != null) {
 				result = "Doctor " + doctor.getName() + "'s Appointments:\n";
-				result += "Doctor/Status/Patient/Time\n\n";
+				result += "Doctor | Patient | Time | Status\n\n";
 				for(AppointmentRequest appointment:doctors_appointments) {
-					result += appointment.getDoctor().getName() + " / ";
+					result += appointment.getDoctor().getName() + " | ";
+					result += appointment.getPatient().getName() + " | " + appointment.getFormattedTime() +" | ";
 					if(appointment.isFulfilled()) {
 						result += "SCHEDULED";
 					}
 					else {
 						result += "NOT SCHEDULED";
 					}
-					result += " / " + appointment.getPatient().getName() + " / " + appointment.getFormattedTime() +"\n";
 				}
 				result += "\n";
 			}

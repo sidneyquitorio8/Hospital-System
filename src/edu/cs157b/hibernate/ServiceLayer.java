@@ -314,7 +314,7 @@ public class ServiceLayer {
 		}
 		else {
 			dao.createAppointmentRequest(patient, doctor, time);
-			result = "Appointment Created";
+			result = "Appointment Request Created";
 		}
 		
 		return result;
